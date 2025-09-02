@@ -127,3 +127,22 @@ Similar products
     * <https://gist.github.com/fumiyas/10490722> (qrcode-sixel)
     * <https://github.com/fumiyas/home-commands/blob/master/qrcode-aa>
 
+Releases on GitHub
+---------------------------------------------------------------------
+
+This repo publishes release binaries via GitHub Actions when you push a tag
+matching `v*` (e.g., `v1.2.3`). The workflow builds cross-platform binaries and
+attaches them to the release with checksums.
+
+Steps to release:
+
+```console
+$ git tag vX.Y.Z
+$ git push origin vX.Y.Z
+```
+
+The release job will:
+
+- Run `make get && make vendor && make cross`
+- Upload `dist/qrc-<os>-<arch>` and `dist/SHASUMS256.txt` to the GitHub Release
+
