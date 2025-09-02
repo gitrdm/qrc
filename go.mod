@@ -8,6 +8,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
+	golang.org/x/term v0.22.0
 )
 
 require golang.org/x/sys v0.22.0 // indirect

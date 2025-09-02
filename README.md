@@ -41,6 +41,8 @@ Options:
     (TERM contains "sixel" or "mlterm", XTERM_SIXEL=1, or QRC_SIXEL=1 to force).
   --version
     Print version and exit
+  -p, --prompt
+    Securely prompt for TEXT with no echo (avoids putting secrets in shell history)
 
 Text examples:
   http://www.example.jp/
@@ -49,6 +51,9 @@ Text examples:
 $ qrc https://fumiyas.github.io/
 ...
 $ qrc 'WIFI:S:Our-ssid;T:WPA;P:secret;;'
+...
+# Avoid putting secrets in your shell history:
+$ qrc --prompt  # then type your text (no echo)
 ...
 ```
 

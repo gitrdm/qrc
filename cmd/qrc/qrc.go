@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 		"strings"
+	term "golang.org/x/term"
 
 	"github.com/fumiyas/qrc/lib"
 )
@@ -19,6 +20,7 @@ type cmdOptions struct {
 	Inverse bool `short:"i" long:"invert" description:"invert color"`
 	Format  string `short:"f" long:"format" choice:"aa" choice:"sixel" description:"output format (aa|sixel); default auto-detect"`
 		Version bool `long:"version" description:"print version and exit"`
+		Prompt  bool `short:"p" long:"prompt" description:"secure prompt (no echo) for TEXT to avoid shell history"`
 }
 
 func showHelp() {
@@ -39,6 +41,8 @@ Options:
 			or XTERM_SIXEL=1 for xterm). Otherwise falls back to ASCII art.
 	--version
 		Print version and exit
+	-p, --prompt
+		Securely prompt for TEXT with no echo (avoids putting secrets in shell history)
 
 Text examples:
   http://www.example.jp/
@@ -78,6 +82,17 @@ func main() {
 	var text string
 	if len(args) == 1 {
 		text = args[0]
+	} else if opts.Prompt && isatty.IsTerminal(os.Stdin.Fd()) {
+		// Secure prompt without echo
+		fmt.Fprint(os.Stderr, "Text: ")
+		b, err := term.ReadPassword(int(os.Stdin.Fd()))
+		fmt.Fprintln(os.Stderr)
+		if err != nil {
+			pErr("secure prompt failed: %v\n", err)
+			ret = 1
+			return
+		}
+		text = string(b)
 	} else {
 		// No args: if stdin is a TTY, show help and exit to avoid hanging
 		if isatty.IsTerminal(os.Stdin.Fd()) {
