@@ -51,6 +51,8 @@ jobs:
 
       - name: Generate checksums
         run: |
+          mkdir -p dist
+          ls -l dist || true
           cd dist
           sha256sum * > SHASUMS256.txt
 

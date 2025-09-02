@@ -19,6 +19,7 @@ build:
 
 cross:
 	@set -e; \
+	mkdir -p dist; \
 	for target in $(CROSS_TARGETS); do \
 		OS=$${target%/*}; ARCH=$${target#*/}; \
 		echo "Building $$OS/$$ARCH"; \
