@@ -23,7 +23,6 @@ You can transfer data to smartphones with a QR code reader application
 from your terminal.
 
 Usage
----------------------------------------------------------------------
 
 `qrc` program takes a text from command-line argument or standard
 input (if no command-line argument) and encodes it to a QR code.
@@ -40,6 +39,8 @@ Options:
   -f, --format <aa|sixel>
     Output format. If omitted, auto-detects Sixel support on TTY using env hints
     (TERM contains "sixel" or "mlterm", XTERM_SIXEL=1, or QRC_SIXEL=1 to force).
+  --version
+    Print version and exit
 
 Text examples:
   http://www.example.jp/

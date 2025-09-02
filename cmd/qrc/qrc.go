@@ -12,10 +12,13 @@ import (
 	"github.com/fumiyas/qrc/lib"
 )
 
+const appVersion = "1.0.0"
+
 type cmdOptions struct {
 	Help    bool `short:"h" long:"help" description:"show this help message"`
 	Inverse bool `short:"i" long:"invert" description:"invert color"`
 	Format  string `short:"f" long:"format" choice:"aa" choice:"sixel" description:"output format (aa|sixel); default auto-detect"`
+		Version bool `long:"version" description:"print version and exit"`
 }
 
 func showHelp() {
@@ -34,6 +37,8 @@ Options:
 			If not specified, auto-detect tries to use Sixel only on TTY when
 			environment suggests support (QRC_SIXEL=1, TERM contains "sixel" or "mlterm",
 			or XTERM_SIXEL=1 for xterm). Otherwise falls back to ASCII art.
+	--version
+		Print version and exit
 
 Text examples:
   http://www.example.jp/
@@ -63,6 +68,10 @@ func main() {
 	}
 	if opts.Help {
 		showHelp()
+		return
+	}
+	if opts.Version {
+		fmt.Fprintf(os.Stdout, "qrc %s\n", appVersion)
 		return
 	}
 
