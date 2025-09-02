@@ -64,14 +64,14 @@ jobs:
             *) echo "version must start with 'v' (e.g., v1.2.3)" >&2; exit 1;;
           esac
 
-    - name: Create GitHub Release and upload assets
+      - name: Create GitHub Release and upload assets
         if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.version || '' }}
           prerelease: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.prerelease || false }}
           generate_release_notes: true
-      name: qrc ${{ steps.ver.outputs.version }}
+          name: qrc ${{ steps.ver.outputs.version }}
           files: |
             dist/qrc-*
             dist/SHASUMS256.txt

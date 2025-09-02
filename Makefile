@@ -23,7 +23,7 @@ cross:
 	for target in $(CROSS_TARGETS); do \
 		OS=$${target%/*}; ARCH=$${target#*/}; \
 		echo "Building $$OS/$$ARCH"; \
-		GOOS=$$OS GOARCH=$$ARCH $(GO) build -mod=vendor $(LDFLAGS) -o dist/qrc-$$OS-$$ARCH ./cmd/qrc; \
+		CGO_ENABLED=0 GOOS=$$OS GOARCH=$$ARCH $(GO) build -mod=vendor $(LDFLAGS) -o dist/qrc-$$OS-$$ARCH ./cmd/qrc; \
 	done
 
 test:
