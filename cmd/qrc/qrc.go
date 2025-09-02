@@ -2,25 +2,26 @@ package main
 
 import (
 	"fmt"
-	"github.com/jessevdk/go-flags"
-	"github.com/mattn/go-colorable"
-		isatty "github.com/mattn/go-isatty"
 	"io"
 	"os"
-		"strings"
+	"strings"
+
+	"github.com/jessevdk/go-flags"
+	"github.com/mattn/go-colorable"
+	isatty "github.com/mattn/go-isatty"
 	term "golang.org/x/term"
 
-	"github.com/fumiyas/qrc/lib"
+	qrc "github.com/fumiyas/qrc/lib"
 )
 
 var appVersion = "1.0.0" // overridden by -ldflags "-X main.appVersion=<version>"
 
 type cmdOptions struct {
-	Help    bool `short:"h" long:"help" description:"show this help message"`
-	Inverse bool `short:"i" long:"invert" description:"invert color"`
+	Help    bool   `short:"h" long:"help" description:"show this help message"`
+	Inverse bool   `short:"i" long:"invert" description:"invert color"`
 	Format  string `short:"f" long:"format" choice:"aa" choice:"sixel" description:"output format (aa|sixel); default auto-detect"`
-		Version bool `long:"version" description:"print version and exit"`
-		Prompt  bool `short:"p" long:"prompt" description:"secure prompt (no echo) for TEXT to avoid shell history"`
+	Version bool   `long:"version" description:"print version and exit"`
+	Prompt  bool   `short:"p" long:"prompt" description:"secure prompt (no echo) for TEXT to avoid shell history"`
 }
 
 func showHelp() {
