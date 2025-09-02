@@ -12,7 +12,7 @@ import (
 	"github.com/fumiyas/qrc/lib"
 )
 
-const appVersion = "1.0.0"
+var appVersion = "1.0.0" // overridden by -ldflags "-X main.appVersion=<version>"
 
 type cmdOptions struct {
 	Help    bool `short:"h" long:"help" description:"show this help message"`
