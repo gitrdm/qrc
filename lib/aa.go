@@ -2,13 +2,12 @@ package qrc
 
 import (
 	"bufio"
-	"github.com/qpliu/qrencode-go/qrencode"
 	"fmt"
 	"github.com/mgutz/ansi"
 	"io"
 )
 
-func PrintAA(w_in io.Writer, grid *qrencode.BitGrid, inverse bool) {
+func PrintAA(w_in io.Writer, grid Grid, inverse bool) {
 	// Buffering required for Windows (go-colorable) support
 	w := bufio.NewWriterSize(w_in, 1024)
 

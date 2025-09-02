@@ -1,12 +1,11 @@
 package qrc
 
 import (
-	"github.com/qpliu/qrencode-go/qrencode"
 	"fmt"
 	"io"
 )
 
-func PrintSixel(w io.Writer, grid *qrencode.BitGrid, inverse bool) {
+func PrintSixel(w io.Writer, grid Grid, inverse bool) {
 	black := "0"
 	white := "1"
 

@@ -1,20 +1,21 @@
 package main
 
 import (
-	"github.com/qpliu/qrencode-go/qrencode"
 	"fmt"
 	"github.com/jessevdk/go-flags"
 	"github.com/mattn/go-colorable"
-	"io/ioutil"
+		isatty "github.com/mattn/go-isatty"
+	"io"
 	"os"
+		"strings"
 
 	"github.com/fumiyas/qrc/lib"
-	"github.com/fumiyas/go-tty"
 )
 
 type cmdOptions struct {
 	Help    bool `short:"h" long:"help" description:"show this help message"`
 	Inverse bool `short:"i" long:"invert" description:"invert color"`
+	Format  string `short:"f" long:"format" choice:"aa" choice:"sixel" description:"output format (aa|sixel); default auto-detect"`
 }
 
 func showHelp() {
@@ -25,6 +26,14 @@ Options:
     Show this help message
   -i, --invert
     Invert color
+  -f, --format <aa|sixel>
+	Output format (default: auto-detect)
+	  aa     ASCII art using ANSI colors
+	  sixel  Sixel graphics (if terminal supports it)
+      
+			If not specified, auto-detect tries to use Sixel only on TTY when
+			environment suggests support (QRC_SIXEL=1, TERM contains "sixel" or "mlterm",
+			or XTERM_SIXEL=1 for xterm). Otherwise falls back to ASCII art.
 
 Text examples:
   http://www.example.jp/
@@ -36,8 +45,8 @@ Text examples:
 }
 
 func pErr(format string, a ...interface{}) {
-	fmt.Fprint(os.Stdout, os.Args[0], ": ")
-	fmt.Fprintf(os.Stdout, format, a...)
+	fmt.Fprint(os.Stderr, os.Args[0], ": ")
+	fmt.Fprintf(os.Stderr, format, a...)
 }
 
 func main() {
@@ -61,7 +70,13 @@ func main() {
 	if len(args) == 1 {
 		text = args[0]
 	} else {
-		text_bytes, err := ioutil.ReadAll(os.Stdin)
+		// No args: if stdin is a TTY, show help and exit to avoid hanging
+		if isatty.IsTerminal(os.Stdin.Fd()) {
+			showHelp()
+			ret = 1
+			return
+		}
+		text_bytes, err := io.ReadAll(os.Stdin)
 		if err != nil {
 			pErr("read from stdin failed: %v\n", err)
 			ret = 1
@@ -70,18 +85,34 @@ func main() {
 		text = string(text_bytes)
 	}
 
-	grid, err := qrencode.Encode(text, qrencode.ECLevelL)
+	grid, err := qrc.EncodeToGrid(text)
 	if err != nil {
 		pErr("encode failed: %v\n", err)
 		ret = 1
 		return
 	}
 
-	da1, err := tty.GetDeviceAttributes1(os.Stdout)
-	if err == nil && da1[tty.DA1_SIXEL] {
+	// Decide output format
+	switch opts.Format {
+	case "sixel":
 		qrc.PrintSixel(os.Stdout, grid, opts.Inverse)
-	} else {
+		return
+	case "aa":
 		stdout := colorable.NewColorableStdout()
 		qrc.PrintAA(stdout, grid, opts.Inverse)
+		return
 	}
+
+	// Heuristic auto-detect: only attempt Sixel on TTY with env hints
+	if isatty.IsTerminal(os.Stdout.Fd()) {
+		term := os.Getenv("TERM")
+		force := os.Getenv("QRC_SIXEL") == "1"
+		xtermSixel := os.Getenv("XTERM_SIXEL") == "1"
+		if force || strings.Contains(term, "sixel") || strings.Contains(term, "mlterm") || (strings.Contains(term, "xterm") && xtermSixel) {
+			qrc.PrintSixel(os.Stdout, grid, opts.Inverse)
+			return
+		}
+	}
+	stdout := colorable.NewColorableStdout()
+	qrc.PrintAA(stdout, grid, opts.Inverse)
 }

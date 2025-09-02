@@ -37,6 +37,9 @@ Options:
     Show this help message
   -i, --invert
     Invert color
+  -f, --format <aa|sixel>
+    Output format. If omitted, auto-detects Sixel support on TTY using env hints
+    (TERM contains "sixel" or "mlterm", XTERM_SIXEL=1, or QRC_SIXEL=1 to force).
 
 Text examples:
   http://www.example.jp/
@@ -63,11 +66,36 @@ Binary files are here for Linux, Mac OS X and Windows:
 Build from source codes
 ---------------------------------------------------------------------
 
-If you have Go language environment, try the following:
+If you have Go 1.18+ installed:
 
 ```console
-$ go get github.com/fumiyas/qrc/cmd/qrc
+$ git clone https://github.com/fumiyas/qrc
+$ cd qrc
+$ go build ./cmd/qrc
 ```
+
+Reproducible builds (vendored dependencies)
+---------------------------------------------------------------------
+
+This project commits the `vendor/` directory and builds with `-mod=vendor`.
+That means:
+
+- You can build and test completely offline using only the pinned deps.
+- Supply-chain surface is reduced; versions are locked by `go.mod`/`go.sum` and source is vendored.
+- The Makefile targets (`build`, `test`, `cross`) already enforce vendor mode.
+
+Updating dependencies (maintainers):
+
+```console
+$ make get         # runs: go mod tidy
+$ make vendor      # runs: go mod vendor
+$ git add go.mod go.sum vendor/
+$ git commit -m "deps: update modules and refresh vendor"
+```
+
+If you prefer not to vendor in your fork, remove `-mod=vendor` in `Makefile`
+and do not commit `vendor/`. However, the default in this repo is to keep
+`vendor/` for predictable, offline builds.
 
 TODO
 ----------------------------------------------------------------------

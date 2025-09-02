@@ -1,2 +1,28 @@
+# Build artifacts
+dist/
+bin/
+build/
+
+# Compiled binaries
+qrc
+qrc.exe
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test/coverage outputs
+*.test
+*.out
+coverage.*
+
+# Editor/OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Keep vendor tracked for reproducible builds
+# vendor/
 /qrc
 tags
